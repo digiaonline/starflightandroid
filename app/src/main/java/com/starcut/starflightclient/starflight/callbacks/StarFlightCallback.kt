@@ -1,17 +1,16 @@
-package com.starcut.starflightclient;
+package com.starcut.starflightclient.starflight.callbacks
 
-public interface StarFlightCallback<T extends StarFlightResponse>
-{
+interface StarFlightCallback<T : StarFlightResponse> {
     /**
      * Called when the operation succeeds
      * @param result the result of the operation
      */
-    public void onSuccess(T result);
+    fun onSuccess(result: T)
 
     /**
      * Called when the operation fails.
      * @param message error description
      * @param t an exception that occurred, or null if not applicable
      */
-    public void onFailure(String message, Throwable t);
+    fun onFailure(message: String, t: Throwable)
 }
