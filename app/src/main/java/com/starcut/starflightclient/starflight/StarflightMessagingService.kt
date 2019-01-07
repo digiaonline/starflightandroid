@@ -68,8 +68,6 @@ abstract class StarflightMessagingService : FirebaseMessagingService() {
     abstract fun onReceive(text: String?, url: String?, messageUuid: UUID, options: JSONObject)
 
     companion object {
-
-
         private const val TAG = "MessagingService"
         private const val UUID_KEY = "uuid"
     }

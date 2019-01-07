@@ -23,7 +23,7 @@ class StarFlightNetworkClient(private val okHttpClient: OkHttpClient) {
     fun sendUnregistrationToBackend(
         appId: String,
         clientSecret: String,
-        registrationId: String,
+        token: String,
         tags: List<String>?
     ): UnregistrationResponse {
         val formBodyBuilder = FormBody.Builder()
@@ -31,7 +31,7 @@ class StarFlightNetworkClient(private val okHttpClient: OkHttpClient) {
             .add("appId", appId)
             .add("clientSecret", clientSecret)
             .add("type", "android")
-            .add("token", registrationId)
+            .add("token", token)
 
         if (!tags.isNullOrEmpty()) {
             formBodyBuilder.add("tags", TextUtils.join(",", tags))
@@ -104,8 +104,8 @@ class StarFlightNetworkClient(private val okHttpClient: OkHttpClient) {
     @Throws(IOException::class)
     fun markMessageOpened(
         appId: String,
-        registrationId: String,
         clientSecret: String,
+        token: String,
         messageUuid: UUID
     ): MessageOpenedResponse {
         val formBody = FormBody.Builder()
@@ -113,7 +113,7 @@ class StarFlightNetworkClient(private val okHttpClient: OkHttpClient) {
             .add("appId", appId)
             .add("clientSecret", clientSecret)
             .add("type", "android")
-            .add("token", registrationId)
+            .add("token", token)
             .add("uuid", messageUuid.toString())
             .build()
 
