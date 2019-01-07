@@ -282,7 +282,7 @@ class StarFlightClient
         try {
             runBlocking(Dispatchers.IO){
                 val registrationId = getFirebaseToken(context)
-                networkClient.markMessageOpened(appId, registrationId!!, clientSecret, messageUuid)
+                networkClient.markMessageOpened(appId, clientSecret, registrationId!!, messageUuid)
                 storeMessageOpened(context, messageUuid)
             }
             callOnSuccess(callback, MessageOpenedResponse(MessageOpenedResponse.Result.OK))

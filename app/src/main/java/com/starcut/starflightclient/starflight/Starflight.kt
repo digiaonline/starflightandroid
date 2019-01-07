@@ -2,9 +2,9 @@ package com.starcut.starflightclient.starflight
 
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException
 import com.starcut.starflightclient.starflight.callbacks.MessageOpenedResponse
 import com.starcut.starflightclient.starflight.callbacks.RegistrationResponse
 import com.starcut.starflightclient.starflight.callbacks.StarFlightCallback
@@ -54,77 +54,53 @@ object Starflight {
 
     /**
      * Registers for push notifications
-     * @param callback callback that will be notified of success or failure
-     */
-    fun register(activity: Activity, callback: StarFlightCallback<RegistrationResponse>) {
-        try {
-            register(activity as Context, callback)
-        } catch (e: Exception) {
-            handlePlayServicesError(activity)
-        }
-    }
-
-    /**
-     * Registers for push notifications
+     * Only call from the main thread
      * @param callback callback that will be notified of success or failure
      */
     @Throws(Exception::class)
     fun register(context: Context, callback: StarFlightCallback<RegistrationResponse>) {
-        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS) {
+        val errorCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
+        if (errorCode == ConnectionResult.SUCCESS) {
             starflightClient!!.register(context, null, callback)
         } else {
-            throw Exception("Google play missing")
+            throw GooglePlayServicesNotAvailableException(errorCode)
         }
-    }
-
-    fun register(activity: Activity, tags: List<String>, callback: StarFlightCallback<RegistrationResponse>) {
-        try {
-            register(activity as Context, tags, callback)
-        } catch (e: Exception) {
-            handlePlayServicesError(activity)
-        }
-
     }
 
     @Throws(Exception::class)
     fun register(context: Context, tags: List<String>, callback: StarFlightCallback<RegistrationResponse>) {
         if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS) {
-            starflightClient!!.register(context, null, callback)
+            starflightClient!!.register(context, tags, callback)
         }
     }
 
-    fun unregister(activity: Activity, callback: StarFlightCallback<UnregistrationResponse>) {
-        try {
-            starflightClient!!.unregister(activity as Context, callback)
-        } catch (e: Exception) {
-            handlePlayServicesError(activity)
-        }
-
-    }
-
+    /**
+     * Unregisters for push notifications (all tags)
+     * Only call from the main thread
+     * @param callback callback that will be notified of success or failure
+     */
     @Throws(Exception::class)
     fun unregister(context: Context, callback: StarFlightCallback<UnregistrationResponse>) {
-        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS) {
+        val errorCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
+        if (errorCode == ConnectionResult.SUCCESS) {
             starflightClient!!.unregister(context, callback)
         } else {
-            throw Exception("Google play missing")
+            throw GooglePlayServicesNotAvailableException(errorCode)
         }
     }
 
-    fun unregister(activity: Activity, tags: List<String>, callback: StarFlightCallback<UnregistrationResponse>) {
-        try {
-            starflightClient!!.unregister(activity as Context, tags, callback)
-        } catch (e: Exception) {
-            handlePlayServicesError(activity)
-        }
-    }
-
+    /**
+     * Unsubscribe to some tags
+     * Only call from the main thread
+     * @param callback callback that will be notified of success or failure
+     */
     @Throws(Exception::class)
     fun unregister(context: Context, tags: List<String>, callback: StarFlightCallback<UnregistrationResponse>) {
-        if (GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context) == ConnectionResult.SUCCESS) {
+        val errorCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(context)
+        if (errorCode == ConnectionResult.SUCCESS) {
             starflightClient!!.unregister(context, tags, callback)
         } else {
-            throw Exception("Google play missing")
+            throw GooglePlayServicesNotAvailableException(errorCode)
         }
     }
 
@@ -136,13 +112,16 @@ object Starflight {
         starflightClient!!.markMessageAsRead(context, messageUuid, callback)
     }
 
-    private fun handlePlayServicesError(activity: Activity) {
+    /**
+     * Displays a standard error message if google play is not available
+     */
+    fun handlePlayServicesError(activity: Activity) {
         val resultCode = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(activity)
         if (GoogleApiAvailability.getInstance().isUserResolvableError(resultCode)) {
             GoogleApiAvailability.getInstance().getErrorDialog(activity, resultCode, PLAY_SERVICES_RESOLUTION_REQUEST)
                 .show()
         } else {
-            Log.e(Starflight::class.java.name, "This device is not supported.")
+            throw GooglePlayServicesNotAvailableException(resultCode)
         }
     }
 

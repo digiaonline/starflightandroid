@@ -10,10 +10,10 @@ import java.util.concurrent.Executor
 class TaskMock : Task<InstanceIdResult>() {
 
     override fun getResult(): InstanceIdResult? {
-        return rezult
+        return mockResult
     }
 
-    var rezult : InstanceIdResult? = null
+    var mockResult : InstanceIdResult? = null
 
     override fun isComplete(): Boolean {
         return true
@@ -40,7 +40,7 @@ class TaskMock : Task<InstanceIdResult>() {
     }
 
     override fun addOnSuccessListener(p0: OnSuccessListener<in InstanceIdResult>): Task<InstanceIdResult> {
-        p0.onSuccess(rezult)
+        p0.onSuccess(mockResult)
         return this
     }
 

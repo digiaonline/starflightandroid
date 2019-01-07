@@ -35,6 +35,7 @@ dependencies {
         exclude group: "com.android.support", module: "support-media-compat"
         exclude group: "com.android.support", module: "support-v4"
     }
+    testImplementation 'com.google.android.gms:play-services-auth:16.0.1'
     testImplementation 'junit:junit:4.12'
     testImplementation "io.mockk:mockk:1.8.9"
     testImplementation 'org.robolectric:robolectric:4.0.2'
